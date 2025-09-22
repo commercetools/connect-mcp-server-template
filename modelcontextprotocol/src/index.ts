@@ -1,8 +1,8 @@
 import * as dotenv from 'dotenv';
+import {randomUUID} from 'node:crypto';
 dotenv.config();
 
 import {
-  CommercetoolsAgentEssentials,
   CommercetoolsAgentEssentialsStreamable,
   AuthConfig,
   Configuration,
@@ -179,19 +179,14 @@ const app: Express = express();
     });
   }
 
-// Create MCP server
-const agentServer = new CommercetoolsAgentEssentials({
-  authConfig: getAuthConfig(env),
-  configuration,
-});
-
 // Add streamable transport layer
 const serverStreamable = new CommercetoolsAgentEssentialsStreamable({
-  stateless: process.env.STATELESS === 'true',
+  authConfig: getAuthConfig(env),
+  configuration,
+  stateless: false,
   streamableHttpOptions: {
-    sessionIdGenerator: undefined,
+    sessionIdGenerator: randomUUID,
   },
-  server: agentServer,
   app: app, 
 });
 
